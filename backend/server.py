@@ -10,6 +10,7 @@ class Server:
     """
     Server class that handle all the scenarios
     """
+    config = None
     symbols = None
     elements_per_update = None
     update_frequency_milliseconds = None
@@ -22,8 +23,8 @@ class Server:
         :param config_file:
         """
         with open(config_file, 'r') as file:
-            config = json.load(file)
-            self.set_config(config)
+            self.config = json.load(file)
+            self.set_config(self.config)
 
     async def handle_live(self, websocket):
         """
@@ -51,14 +52,17 @@ class Server:
         return payload
 
     async def handle_client(self, websocket, path):
+        print(f"< {path}")
         if path == "/live":
             await self.handle_live(websocket)
-        elif path == "/set_config":
+        elif path == "/set-config":
             config = await websocket.recv()
             self.set_config(json.loads(config))
+        elif path == "/get-config":
+            await websocket.send(json.dumps(self.config))
         else:
             await websocket.send("error")
-            await websocket.close()
+        await websocket.close()
 
     def start(self):
         asyncio.get_event_loop().run_until_complete(websockets.serve(self.handle_client, "localhost", 8765))
@@ -71,11 +75,13 @@ class Server:
         :return:
         """
         if 'symbols' in config:
-            self.symbols = config['symbols']
+            self.symbols = self.config['symbols'] = config['symbols']
         if 'update_frequency_milliseconds' in config:
-            self.update_frequency_milliseconds = config['update_frequency_milliseconds']
+            self.update_frequency_milliseconds = self.config['update_frequency_milliseconds'] = int(
+                config['update_frequency_milliseconds']
+            )
         if 'elements_per_update' in config:
-            self.elements_per_update = config['elements_per_update']
+            self.elements_per_update = self.config['elements_per_update'] = int(config['elements_per_update'])
 
 
 if __name__ == '__main__':
