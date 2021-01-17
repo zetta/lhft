@@ -1,0 +1,11 @@
+services:
+  frontend:
+    image: zettacio/lhft-web-gui:latest
+    ports:
+      - "3000:80"
+  backend:
+    image: zettacio/lhft-server:latest
+    ports:
+      - "8765:8765"
+volumes:
+  logvolume01: {}

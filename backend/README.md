@@ -32,3 +32,10 @@ Example elements update:
 ]
 ```
 The price should be randomly generated.
+
+## How to run
+```sh
+pip install -r requirements.txt 
+./server.py
+```
+open [localhost:3000](http://localhost:3000) if doesn't launch automatically

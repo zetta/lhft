@@ -65,7 +65,7 @@ class Server:
         await websocket.close()
 
     def start(self):
-        asyncio.get_event_loop().run_until_complete(websockets.serve(self.handle_client, "localhost", 8765))
+        asyncio.get_event_loop().run_until_complete(websockets.serve(self.handle_client, "0.0.0.0", 8765))
         asyncio.get_event_loop().run_forever()
 
     def set_config(self, config):
