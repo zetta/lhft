@@ -3,9 +3,11 @@ import logo from './logo.svg';
 import './App.css';
 
 const App = () => {
+  const [page, setPage] = useState(1)
+  const perPage = 100
   const [values, updateValues] = useState([])
   const [threshold, setThreshold] = useState(50000)
-  const [frequency, setFrequency] = useState(0)
+  const [frequency, setFrequency] = useState(0) // should use lazy loading
 
   let liveSocket = null
 
@@ -24,7 +26,13 @@ const App = () => {
   useEffect(() => {
     liveSocket.onmessage = function (event) {
         let rows = JSON.parse(event.data)
-        updateValues(rows)
+        updateValues(prevRows => {
+          let temp = rows.concat(prevRows)
+          if (temp.length > 500) {
+            temp = temp.slice(0, 500)
+          }
+          return temp
+        })
     }
   }, [liveSocket]);
 
@@ -46,21 +54,39 @@ const App = () => {
     return price >= threshold ? "green" : "red"
   };
 
+  let start = 0
+  const getRows = (page) => {
+    start = (page-1)*perPage
+    const finish = page*perPage
+    return values.slice(start, finish)
+  }
+
+  const pages = []
+  for (let i = 1; i<=(Math.floor(values.length/perPage) || 1); i++) {
+    pages.push(<option value={i}>{i}</option>)
+  }
+
   return (
       <div className="App">
           <header className="App-header">
               <img src={logo} className="App-logo" alt="logo" /> <p>Web GUI</p>
           </header>
+          <p>Page {page}/{Math.floor(values.length/perPage) || 1} <br />
+          Goto page: <select onChange={(event) => {
+           setPage(event.target.value)
+         }}>{pages}</select></p>
           <table className="main-table">
               <thead>
                   <tr>
+                     <th>#</th>
                      <th>Symbol</th>
                      <th>Price</th>
                   </tr>
               </thead>
               <tbody>
-              {values.map(row => (
+              {getRows(page).map((row, index) => (
                   <tr key={row.symbol+row.price} style={{ backgroundColor: setBackgroundColor(row.price, threshold) }} >
+                     <td>{index+1+(start)}</td>
                      <td>{row.symbol}</td>
                      <td>{row.price}</td>
                   </tr>
