@@ -21,8 +21,8 @@ and navigate to [localhost:3000](http://localhost:3000)
 
 if `docker-compose` nor `make` are an option try with:
 ```sh
-docker run -d -it --rm -p 3000:80 zettacio/lhft-web-gui:dev
-docker run -d -it --rm -p 8765:8765 zettacio/lhft-server:prod
+docker run -d -it --rm -p 3000:80 zettacio/lhft-web-gui:latest
+docker run -d -it --rm -p 8765:8765 zettacio/lhft-server:latest
 ```
 and navigate to [localhost:3000](http://localhost:3000)
 
