@@ -4,7 +4,7 @@ import asyncio
 import websockets
 import json
 import random
-
+import uuid
 
 class Server:
     """
@@ -46,6 +46,7 @@ class Server:
         payload = []
         for i in range(self.elements_per_update):
             payload.append({
+                "uuid": str(uuid.uuid4()),
                 "symbol": self.symbols[i % len(self.symbols)],
                 "price": random.randint(self.min_price, self.max_price)
             })

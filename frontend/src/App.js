@@ -85,7 +85,7 @@ const App = () => {
               </thead>
               <tbody>
               {getRows(page).map((row, index) => (
-                  <tr key={row.symbol+row.price} style={{ backgroundColor: setBackgroundColor(row.price, threshold) }} >
+                  <tr key={row.uuid} style={{ backgroundColor: setBackgroundColor(row.price, threshold) }} >
                      <td>{index+1+(start)}</td>
                      <td>{row.symbol}</td>
                      <td>{row.price}</td>
