@@ -5,3 +5,10 @@ LHFT
 
 
 ## [Frontend](./frontend/README.md)
+
+
+## How to run
+
+### Prerequisites
+- docker
+- docker-compose
