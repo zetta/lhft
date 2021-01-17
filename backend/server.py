@@ -23,9 +23,7 @@ class Server:
         """
         with open(config_file, 'r') as file:
             config = json.load(file)
-            self.symbols = config['symbols']
-            self.update_frequency_milliseconds = config['update_frequency_milliseconds']
-            self.elements_per_update = config['elements_per_update']
+            self.set_config(config)
 
     async def handle_live(self, websocket):
         """
@@ -34,7 +32,6 @@ class Server:
         :param websocket:
         :return:
         """
-
         while True:
             payload = self.generate_payload()
             await websocket.send(json.dumps(payload))
@@ -56,12 +53,29 @@ class Server:
     async def handle_client(self, websocket, path):
         if path == "/live":
             await self.handle_live(websocket)
+        elif path == "/set_config":
+            config = await websocket.recv()
+            self.set_config(json.loads(config))
         else:
             await websocket.send("error")
+            await websocket.close()
 
     def start(self):
         asyncio.get_event_loop().run_until_complete(websockets.serve(self.handle_client, "localhost", 8765))
         asyncio.get_event_loop().run_forever()
+
+    def set_config(self, config):
+        """
+        set all the configuration for the server
+        :param config:
+        :return:
+        """
+        if 'symbols' in config:
+            self.symbols = config['symbols']
+        if 'update_frequency_milliseconds' in config:
+            self.update_frequency_milliseconds = config['update_frequency_milliseconds']
+        if 'elements_per_update' in config:
+            self.elements_per_update = config['elements_per_update']
 
 
 if __name__ == '__main__':
